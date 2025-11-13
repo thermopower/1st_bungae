@@ -235,13 +235,6 @@ docs폴더의 문서를 참고하여 프로그램 구조를 파악하세요. doc
 │   │   └── tdd.md
 │   └── external/                     # 외부 서비스 문서
 │
-├── prompts/                           # Claude 프롬프트
-│   └── codebase.md
-│
-├── .ruler/                            # Ruler 설정
-│   ├── ruler.toml
-│   └── AGENTS.md
-│
 ├── app.py                             # 애플리케이션 엔트리포인트
 ├── requirements.txt                   # Python 의존성
 ├── render.yaml                        # Render 배포 설정
