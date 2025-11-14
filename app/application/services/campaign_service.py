@@ -33,6 +33,96 @@ class CampaignService:
         self.influencer_repository = influencer_repository
         self.application_repository = application_repository
 
+    def create_campaign(
+        self,
+        advertiser_id: int,
+        title: str,
+        description: str,
+        quota: int,
+        start_date: date,
+        end_date: date,
+        benefits: str,
+        conditions: str,
+        image_url: Optional[str] = None
+    ) -> Campaign:
+        """
+        체험단 생성
+
+        Args:
+            advertiser_id: 광고주 ID
+            title: 체험단 제목
+            description: 체험단 설명
+            quota: 모집 인원
+            start_date: 모집 시작일
+            end_date: 모집 종료일
+            benefits: 제공 혜택
+            conditions: 체험 조건
+            image_url: 대표 이미지 URL (optional)
+
+        Returns:
+            생성된 Campaign 엔티티
+        """
+        from app.domain.entities.campaign import Campaign, CampaignStatus
+        from datetime import datetime
+
+        # Campaign 엔티티 생성
+        campaign = Campaign(
+            id=None,
+            advertiser_id=advertiser_id,
+            title=title,
+            description=description,
+            quota=quota,
+            start_date=start_date,
+            end_date=end_date,
+            benefits=benefits,
+            conditions=conditions,
+            image_url=image_url,
+            status=CampaignStatus.RECRUITING,
+            created_at=datetime.utcnow(),
+            closed_at=None
+        )
+
+        # Repository를 통해 저장
+        saved_campaign = self.campaign_repository.save(campaign)
+        return saved_campaign
+
+    def get_advertiser_campaigns(
+        self, advertiser_id: int
+    ) -> List[CampaignListItemDTO]:
+        """
+        광고주의 체험단 목록 조회 (상태별)
+
+        Args:
+            advertiser_id: 광고주 ID
+
+        Returns:
+            체험단 목록 (CampaignListItemDTO 리스트)
+        """
+        # 광고주의 모든 체험단 조회
+        campaigns = self.campaign_repository.find_by_advertiser_id(advertiser_id)
+
+        # DTO 변환
+        campaign_dtos = []
+        for campaign in campaigns:
+            # 지원자 수 조회
+            application_count = self.campaign_repository.get_application_count(campaign.id)
+
+            campaign_dtos.append(
+                CampaignListItemDTO(
+                    id=campaign.id,
+                    title=campaign.title,
+                    description_short=campaign.description[:100],
+                    image_url=campaign.image_url,
+                    quota=campaign.quota,
+                    application_count=application_count,
+                    deadline=campaign.end_date,
+                    business_name='',  # 광고주 자신의 체험단이므로 불필요
+                    status=campaign.status.value
+                )
+            )
+
+        return campaign_dtos
+
     def get_campaign_detail(
         self, campaign_id: int, user_id: Optional[str] = None
     ) -> Optional[CampaignDetailDTO]:

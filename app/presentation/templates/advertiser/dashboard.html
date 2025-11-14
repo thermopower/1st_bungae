@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}광고주 대시보드 - 1st Bungae{% endblock %}
+
+{% block extra_css %}
+<style>
+    .tab-pane {
+        padding-top: 20px;
+    }
+    .campaign-card {
+        transition: transform 0.2s;
+    }
+    .campaign-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .campaign-status-badge {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>광고주 대시보드</h2>
+        <a href="{{ url_for('advertiser.create_campaign') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 체험단 생성
+        </a>
+    </div>
+
+    <!-- 탭 네비게이션 -->
+    <ul class="nav nav-tabs" id="campaignTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="recruiting-tab" data-bs-toggle="tab" data-bs-target="#recruiting" type="button" role="tab">
+                모집 중 <span class="badge bg-primary">{{ recruiting_campaigns|length }}</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="closed-tab" data-bs-toggle="tab" data-bs-target="#closed" type="button" role="tab">
+                모집 종료 <span class="badge bg-secondary">{{ closed_campaigns|length }}</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="selected-tab" data-bs-toggle="tab" data-bs-target="#selected" type="button" role="tab">
+                선정 완료 <span class="badge bg-success">{{ selected_campaigns|length }}</span>
+            </button>
+        </li>
+    </ul>
+
+    <!-- 탭 컨텐츠 -->
+    <div class="tab-content" id="campaignTabsContent">
+        <!-- 모집 중 탭 -->
+        <div class="tab-pane fade show active" id="recruiting" role="tabpanel">
+            {% if recruiting_campaigns %}
+                <div class="row">
+                    {% for campaign in recruiting_campaigns %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card campaign-card h-100">
+                            {% if campaign.image_url %}
+                            <img src="{{ campaign.image_url }}" class="card-img-top" alt="{{ campaign.title }}">
+                            {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ campaign.title }}</h5>
+                                <p class="card-text text-muted">{{ campaign.description_short }}...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-people"></i> {{ campaign.application_count }} / {{ campaign.quota }}명
+                                    </span>
+                                    <span class="badge campaign-status-badge bg-primary">모집 중</span>
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar-event"></i> 마감일: {{ campaign.deadline.strftime('%Y-%m-%d') }}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url_for('advertiser.campaign_detail', campaign_id=campaign.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                                    상세보기
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> 모집 중인 체험단이 없습니다.
+                    <a href="{{ url_for('advertiser.create_campaign') }}" class="alert-link">체험단을 생성해보세요!</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 모집 종료 탭 -->
+        <div class="tab-pane fade" id="closed" role="tabpanel">
+            {% if closed_campaigns %}
+                <div class="row">
+                    {% for campaign in closed_campaigns %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card campaign-card h-100">
+                            {% if campaign.image_url %}
+                            <img src="{{ campaign.image_url }}" class="card-img-top" alt="{{ campaign.title }}">
+                            {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ campaign.title }}</h5>
+                                <p class="card-text text-muted">{{ campaign.description_short }}...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-people"></i> {{ campaign.application_count }} / {{ campaign.quota }}명
+                                    </span>
+                                    <span class="badge campaign-status-badge bg-secondary">모집 종료</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url_for('advertiser.campaign_detail', campaign_id=campaign.id) }}" class="btn btn-outline-secondary btn-sm w-100">
+                                    상세보기
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> 모집 종료된 체험단이 없습니다.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 선정 완료 탭 -->
+        <div class="tab-pane fade" id="selected" role="tabpanel">
+            {% if selected_campaigns %}
+                <div class="row">
+                    {% for campaign in selected_campaigns %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card campaign-card h-100">
+                            {% if campaign.image_url %}
+                            <img src="{{ campaign.image_url }}" class="card-img-top" alt="{{ campaign.title }}">
+                            {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ campaign.title }}</h5>
+                                <p class="card-text text-muted">{{ campaign.description_short }}...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="bi bi-people"></i> {{ campaign.application_count }} / {{ campaign.quota }}명
+                                    </span>
+                                    <span class="badge campaign-status-badge bg-success">선정 완료</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url_for('advertiser.campaign_detail', campaign_id=campaign.id) }}" class="btn btn-outline-success btn-sm w-100">
+                                    상세보기
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> 선정 완료된 체험단이 없습니다.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/pages/advertiser_dashboard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}체험단 생성 - 1st Bungae{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> 체험단 생성</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <!-- 제목 -->
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                            {% if form.title.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- 설명 -->
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=5) }}
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">체험단에 대한 상세한 설명을 입력해주세요</small>
+                        </div>
+
+                        <!-- 모집 인원 -->
+                        <div class="mb-3">
+                            {{ form.quota.label(class="form-label") }}
+                            {{ form.quota(class="form-control" + (" is-invalid" if form.quota.errors else ""), type="number", min="1", max="100") }}
+                            {% if form.quota.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.quota.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- 모집 시작일 -->
+                        <div class="mb-3">
+                            {{ form.start_date.label(class="form-label") }}
+                            {{ form.start_date(class="form-control" + (" is-invalid" if form.start_date.errors else ""), type="date") }}
+                            {% if form.start_date.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.start_date.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- 모집 종료일 -->
+                        <div class="mb-3">
+                            {{ form.end_date.label(class="form-label") }}
+                            {{ form.end_date(class="form-control" + (" is-invalid" if form.end_date.errors else ""), type="date") }}
+                            {% if form.end_date.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.end_date.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- 제공 혜택 -->
+                        <div class="mb-3">
+                            {{ form.benefits.label(class="form-label") }}
+                            {{ form.benefits(class="form-control" + (" is-invalid" if form.benefits.errors else ""), rows=3) }}
+                            {% if form.benefits.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.benefits.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">예: 무료 제품 제공, 체험비 지급 등</small>
+                        </div>
+
+                        <!-- 체험 조건 -->
+                        <div class="mb-3">
+                            {{ form.conditions.label(class="form-label") }}
+                            {{ form.conditions(class="form-control" + (" is-invalid" if form.conditions.errors else ""), rows=3) }}
+                            {% if form.conditions.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.conditions.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">예: 인스타그램 피드 1개 + 스토리 2개 업로드</small>
+                        </div>
+
+                        <!-- 대표 이미지 -->
+                        <div class="mb-4">
+                            {{ form.image.label(class="form-label") }}
+                            {{ form.image(class="form-control" + (" is-invalid" if form.image.errors else "")) }}
+                            {% if form.image.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.image.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">이미지 파일 (jpg, jpeg, png, gif) - 선택사항</small>
+                        </div>
+
+                        <!-- 제출 버튼 -->
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                            <a href="{{ url_for('advertiser.dashboard') }}" class="btn btn-outline-secondary">취소</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
