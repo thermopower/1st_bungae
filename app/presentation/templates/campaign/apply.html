@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}체험단 지원 - {{ campaign.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- 체험단 정보 요약 -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">체험단 정보</h5>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ campaign.title }}</h4>
+                    {% if campaign.image_url %}
+                    <img src="{{ campaign.image_url }}" class="img-fluid rounded mb-3" alt="{{ campaign.title }}">
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <strong>업체명:</strong> {{ campaign.business_name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>모집 인원:</strong> {{ campaign.quota }}명
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>현재 지원자:</strong> {{ campaign.application_count }}명
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>마감일:</strong> {{ campaign.end_date.strftime('%Y년 %m월 %d일') }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>제공 혜택:</strong>
+                        <p class="text-muted mb-0">{{ campaign.benefits }}</p>
+                    </div>
+
+                    <div>
+                        <strong>체험 조건:</strong>
+                        <p class="text-muted mb-0">{{ campaign.conditions }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 지원 폼 -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">체험단 지원하기</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('campaign.apply_campaign', campaign_id=campaign.id) }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.application_reason.label(class="form-label") }}
+                            {{ form.application_reason(class="form-control" + (" is-invalid" if form.application_reason.errors else "")) }}
+                            {% if form.application_reason.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.application_reason.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                이 체험단에 지원하는 이유를 작성해주세요 (선택사항)
+                            </small>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>안내사항:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>지원은 한 번만 가능하며, 취소할 수 없습니다.</li>
+                                <li>광고주가 선정하면 알림을 받게 됩니다.</li>
+                                <li>선정되지 않더라도 별도 알림이 없습니다.</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('campaign.campaign_detail', campaign_id=campaign.id) }}"
+                               class="btn btn-secondary">
+                                취소
+                            </a>
+                            {{ form.submit(class="btn btn-success btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pages/campaign_apply.js') }}"></script>
+{% endblock %}

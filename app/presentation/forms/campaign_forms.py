@@ -99,3 +99,21 @@ class CampaignForm(FlaskForm):
             return False
 
         return True
+
+
+class CampaignApplicationForm(FlaskForm):
+    """체험단 지원 폼"""
+
+    application_reason = TextAreaField(
+        '지원 사유',
+        validators=[
+            Optional(),
+            Length(max=1000, message='지원 사유는 1000자 이하여야 합니다')
+        ],
+        render_kw={
+            "placeholder": "지원 사유를 입력해주세요 (선택사항)",
+            "rows": 5
+        }
+    )
+
+    submit = SubmitField('지원하기')
