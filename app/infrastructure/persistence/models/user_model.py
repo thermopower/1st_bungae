@@ -28,8 +28,8 @@ class UserModel(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(UTC))
 
     # 관계
-    # advertiser = db.relationship('AdvertiserModel', back_populates='user', uselist=False, cascade='all, delete-orphan')
-    # influencer = db.relationship('InfluencerModel', back_populates='user', uselist=False, cascade='all, delete-orphan')
+    advertiser = db.relationship('AdvertiserModel', back_populates='user', uselist=False, cascade='all, delete-orphan')
+    influencer = db.relationship('InfluencerModel', back_populates='user', uselist=False, cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<UserModel id={self.id} email={self.email} role={self.role}>'

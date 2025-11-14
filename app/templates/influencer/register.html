@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}인플루언서 정보 등록{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">인플루언서 정보 등록</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('influencer.register_influencer') }}" id="influencerRegisterForm">
+                        {{ form.hidden_tag() }}
+
+                        {# 공통 정보 #}
+                        <h4 class="mb-3">기본 정보</h4>
+
+                        {# 이름 #}
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            <span class="text-danger">*</span>
+                            {{ form.name(class="form-control") }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">{{ form.name.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        {# 생년월일 #}
+                        <div class="mb-3">
+                            {{ form.birth_date.label(class="form-label") }}
+                            <span class="text-danger">*</span>
+                            {{ form.birth_date(class="form-control", type="date") }}
+                            {% if form.birth_date.errors %}
+                                <div class="text-danger">{{ form.birth_date.errors[0] }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">만 19세 이상만 가입 가능합니다.</small>
+                        </div>
+
+                        {# 휴대폰번호 #}
+                        <div class="mb-3">
+                            {{ form.phone_number.label(class="form-label") }}
+                            <span class="text-danger">*</span>
+                            {{ form.phone_number(class="form-control", id="phoneNumber") }}
+                            {% if form.phone_number.errors %}
+                                <div class="text-danger">{{ form.phone_number.errors[0] }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">하이픈(-)을 포함하여 입력해주세요 (예: 010-1234-5678)</small>
+                        </div>
+
+                        <hr class="my-4">
+
+                        {# 인플루언서 전용 정보 #}
+                        <h4 class="mb-3">SNS 채널 정보</h4>
+
+                        {# SNS 채널명 #}
+                        <div class="mb-3">
+                            {{ form.channel_name.label(class="form-label") }}
+                            <span class="text-danger">*</span>
+                            {{ form.channel_name(class="form-control") }}
+                            {% if form.channel_name.errors %}
+                                <div class="text-danger">{{ form.channel_name.errors[0] }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">활동하는 SNS 채널명을 입력해주세요 (예: 홍길동TV)</small>
+                        </div>
+
+                        {# 채널 링크 #}
+                        <div class="mb-3">
+                            {{ form.channel_url.label(class="form-label") }}
+                            <span class="text-danger">*</span>
+                            {{ form.channel_url(class="form-control", id="channelUrl") }}
+                            {% if form.channel_url.errors %}
+                                <div class="text-danger">{{ form.channel_url.errors[0] }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">채널 URL을 입력해주세요 (예: https://www.youtube.com/@username)</small>
+                        </div>
+
+                        {# 팔로워 수 #}
+                        <div class="mb-3">
+                            {{ form.follower_count.label(class="form-label") }}
+                            <span class="text-danger">*</span>
+                            {{ form.follower_count(class="form-control", id="followerCount") }}
+                            {% if form.follower_count.errors %}
+                                <div class="text-danger">{{ form.follower_count.errors[0] }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">현재 팔로워/구독자 수를 입력해주세요</small>
+                        </div>
+
+                        <hr class="my-4">
+
+                        {# 제출 버튼 #}
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/pages/influencer_register.js') }}"></script>
+{% endblock %}

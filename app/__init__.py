@@ -27,9 +27,13 @@ def create_app(config_class=Config):
     # Blueprint 등록
     from app.presentation.routes.auth_routes import auth_bp
     from app.presentation.routes.main_routes import main_bp
+    from app.presentation.routes.advertiser_routes import advertiser_bp
+    from app.presentation.routes.influencer_routes import influencer_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(advertiser_bp)
+    app.register_blueprint(influencer_bp)
 
     # UserModel import (user_loader 등록을 위해)
     with app.app_context():
