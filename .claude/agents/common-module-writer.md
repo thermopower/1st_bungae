@@ -34,14 +34,18 @@ model: sonnet
 
 ### TDD 프로세스
 1. **RED Phase**: 테스트 파일 먼저 작성
-   - 테스트 파일 위치: `tests/unit/{domain}/test_{module}.py`
+   - 테스트 파일 위치 (언어별):
+     - Python: `tests/unit/{domain}/test_{module}.py`
+     - TypeScript/JavaScript: `tests/unit/{domain}/{module}.test.ts`
+     - Java: `src/test/java/{domain}/{Module}Test.java`
+     - Go: `{domain}/{module}_test.go`
    - 테스트 시나리오:
      - 정상 케이스
      - 경계 케이스
      - 에러 케이스
 
 2. **GREEN Phase**: 최소 구현
-   - 구현 파일 위치: `app/{layer}/{module}.py`
+   - 구현 파일 위치 (프로젝트 구조에 따라 조정)
    - YAGNI 원칙 준수
 
 3. **REFACTOR Phase**: 코드 개선
@@ -81,14 +85,20 @@ TDD 사이클을 따르는 구현 순서를 명시:
 ### 구현 순서 (TDD 사이클)
 
 **Phase 1: {기능1}**
-1. 🔴 RED: `test_{feature1}.py` 작성 → pytest 실행 (FAILED 확인)
-2. 🟢 GREEN: `{module}.py` 최소 구현 → pytest 실행 (PASSED 확인)
-3. 🔵 REFACTOR: 코드 개선 → pytest 실행 (PASSED 유지)
+1. 🔴 RED: 테스트 파일 작성 → 테스트 실행 (FAILED 확인)
+   - Python: `pytest tests/...`
+   - TypeScript/JavaScript: `npm test -- tests/...`
+   - Java: `mvn test -Dtest=...`
+   - Go: `go test -v ./{package}`
+
+2. 🟢 GREEN: 최소 구현 → 테스트 실행 (PASSED 확인)
+
+3. 🔵 REFACTOR: 코드 개선 → 테스트 실행 (PASSED 유지)
 
 **Phase 2: {기능2}**
-1. 🔴 RED: `test_{feature2}.py` 작성 → pytest 실행 (FAILED 확인)
-2. 🟢 GREEN: `{module}.py` 확장 → pytest 실행 (PASSED 확인)
-3. 🔵 REFACTOR: 코드 개선 → pytest 실행 (PASSED 유지)
+1. 🔴 RED: 테스트 파일 확장 → 테스트 실행 (FAILED 확인)
+2. 🟢 GREEN: 기능 확장 → 테스트 실행 (PASSED 확인)
+3. 🔵 REFACTOR: 코드 개선 → 테스트 실행 (PASSED 유지)
 ```
 
 #### 4. 검증 체크리스트
@@ -99,12 +109,12 @@ TDD 사이클을 따르는 구현 순서를 명시:
 ### 검증 체크리스트
 
 - [ ] 모든 기능에 대한 테스트 시나리오 작성 완료
-- [ ] RED Phase: 테스트 실패 확인 (pytest FAILED)
-- [ ] GREEN Phase: 테스트 통과 확인 (pytest PASSED)
+- [ ] RED Phase: 테스트 실패 확인 (FAILED)
+- [ ] GREEN Phase: 테스트 통과 확인 (PASSED)
 - [ ] REFACTOR Phase: 리팩토링 후 테스트 통과 유지
 - [ ] 테스트 커버리지 80% 이상
 - [ ] 에러 케이스 테스트 포함
-- [ ] 문서화 완료 (docstring, type hints)
+- [ ] 문서화 완료 (주석, 타입 정의 등)
 ```
 
 ---
@@ -119,7 +129,7 @@ TDD 사이클을 따르는 구현 순서를 명시:
 ### 원칙 2: Red-Green-Refactor 사이클 명시
 
 - 각 공통 모듈의 구현 순서를 **TDD 사이클**로 명시
-- pytest 실행 및 결과 확인 단계 포함
+- 테스트 프레임워크 실행 및 결과 확인 단계 포함
 
 ### 원칙 3: FIRST 원칙 준수
 
@@ -196,20 +206,24 @@ TDD 사이클을 따르는 구현 순서를 명시:
 
 ### Phase 1: {기능1}
 1. 🔴 RED: 테스트 작성 및 실패 확인
-   - 파일: `tests/unit/{domain}/test_{module}.py`
+   - 파일: {테스트 파일 경로}
    - 시나리오: {정상/경계/에러 케이스}
-   - 실행: `pytest tests/unit/{domain}/test_{module}.py -v`
+   - 실행: {테스트 프레임워크 명령어}
+     - Python: `pytest tests/...`
+     - TypeScript/JavaScript: `npm test -- tests/...`
+     - Java: `mvn test -Dtest=...`
+     - Go: `go test -v ./{package}`
    - 예상: FAILED
 
 2. 🟢 GREEN: 최소 구현
-   - 파일: `app/{layer}/{module}.py`
+   - 파일: {구현 파일 경로}
    - 구현: {간단한 설명}
-   - 실행: `pytest tests/unit/{domain}/test_{module}.py -v`
+   - 실행: {테스트 프레임워크 명령어}
    - 예상: PASSED
 
 3. 🔵 REFACTOR: 코드 개선
    - 중복 제거, 네이밍 개선
-   - 실행: `pytest tests/unit/{domain}/test_{module}.py -v`
+   - 실행: {테스트 프레임워크 명령어}
    - 예상: PASSED (유지)
 
 ### Phase 2: {기능2}
@@ -218,7 +232,7 @@ TDD 사이클을 따르는 구현 순서를 명시:
 ## 4. 검증 체크리스트
 - [ ] 모든 기능에 대한 테스트 시나리오 작성
 - [ ] RED-GREEN-REFACTOR 사이클 준수
-- [ ] pytest 실행 로그 확인
+- [ ] 테스트 프레임워크 실행 로그 확인
 - [ ] 테스트 커버리지 80% 이상
 - [ ] 에러 케이스 포함
 - [ ] 문서화 완료

@@ -95,18 +95,23 @@ model: sonnet
 1. **테스트 파일 우선 생성**
 
    - 구현 코드를 작성하기 전에, 테스트 파일을 먼저 생성합니다.
-   - 테스트 파일 위치 규칙:
-     - 단위 테스트: `tests/unit/{domain}/test_{feature}.py`
-     - 통합 테스트: `tests/integration/{module}/test_{feature}.py`
-     - E2E 테스트: `tests/e2e/{endpoint}/test_{feature}.py`
-   - 예시: `tests/unit/domain/test_campaign_rules.py`
+   - 테스트 파일 위치 규칙 (프로젝트 구조에 따라 조정):
+     - 단위 테스트: `tests/unit/{domain}/test_{feature}.{ext}`
+     - 통합 테스트: `tests/integration/{module}/test_{feature}.{ext}`
+     - E2E 테스트: `tests/e2e/{endpoint}/test_{feature}.{ext}`
+   - 예시:
+     - Python: `tests/unit/domain/test_campaign_rules.py`
+     - TypeScript/JavaScript: `tests/unit/domain/campaign-rules.test.ts`
+     - Java: `src/test/java/domain/CampaignRulesTest.java`
+     - Go: `domain/campaign_rules_test.go`
 
 2. **실패하는 테스트 작성 (AAA 패턴)**
 
-   ```python
-   # Arrange (준비): 테스트 데이터 및 의존성 설정
-   # Act (실행): 함수/메소드 실행
-   # Assert (검증): 예상 결과 검증
+   **AAA 패턴 (모든 언어 공통):**
+   ```
+   // Arrange (준비): 테스트 데이터 및 의존성 설정
+   // Act (실행): 함수/메소드 실행
+   // Assert (검증): 예상 결과 검증
    ```
 
    - **가장 간단한 시나리오**부터 시작합니다.
@@ -120,8 +125,25 @@ model: sonnet
 
 3. **테스트 실행 및 실패 확인 (필수)**
 
+   **테스트 프레임워크별 실행 명령어:**
    ```bash
+   # Python
    pytest tests/{path}/test_{feature}.py::{test_name} -v
+
+   # TypeScript/JavaScript (Jest)
+   npm test -- tests/{path}/{feature}.test.ts
+
+   # TypeScript/JavaScript (Vitest)
+   npx vitest run tests/{path}/{feature}.test.ts
+
+   # Java (JUnit)
+   mvn test -Dtest={TestClassName}#{testMethodName}
+
+   # Go
+   go test -v -run {TestFunctionName} ./{package}
+
+   # C# (.NET)
+   dotnet test --filter "FullyQualifiedName~{TestClassName}.{TestMethodName}"
    ```
 
    - ❌ **테스트가 올바른 이유로 실패하는지 확인**합니다.
@@ -154,8 +176,13 @@ model: sonnet
 
 2. **테스트 재실행 및 통과 확인 (필수)**
 
+   **테스트 프레임워크별 실행 명령어 (동일):**
    ```bash
-   pytest tests/{path}/test_{feature}.py::{test_name} -v
+   # Python: pytest tests/{path}/test_{feature}.py::{test_name} -v
+   # TypeScript/JavaScript: npm test -- tests/{path}/{feature}.test.ts
+   # Java: mvn test -Dtest={TestClassName}#{testMethodName}
+   # Go: go test -v -run {TestFunctionName} ./{package}
+   # C#: dotnet test --filter "FullyQualifiedName~{TestClassName}.{TestMethodName}"
    ```
 
    - ✅ **테스트가 통과하는지 확인**합니다.
@@ -186,8 +213,13 @@ model: sonnet
 
 2. **테스트 재실행 (필수)**
 
+   **테스트 프레임워크별 실행 명령어 (전체 테스트):**
    ```bash
-   pytest tests/{path}/test_{feature}.py -v
+   # Python: pytest tests/{path}/test_{feature}.py -v
+   # TypeScript/JavaScript: npm test -- tests/{path}/{feature}.test.ts
+   # Java: mvn test -Dtest={TestClassName}
+   # Go: go test -v ./{package}
+   # C#: dotnet test --filter "FullyQualifiedName~{TestClassName}"
    ```
 
    - ✅ **리팩토링 후에도 모든 테스트가 통과하는지 확인**합니다.
@@ -250,17 +282,17 @@ model: sonnet
 🔴 RED Phase:
 - 테스트를 먼저 작성했는가?
 - 테스트가 올바른 이유로 실패했는가?
-- pytest 실행 결과가 FAILED인가?
+- 테스트 실행 결과가 FAILED인가?
 
 🟢 GREEN Phase:
 - 최소한의 코드만 작성했는가?
 - 테스트가 통과하는가?
-- pytest 실행 결과가 PASSED인가?
+- 테스트 실행 결과가 PASSED인가?
 
 🔵 REFACTOR Phase:
 - 리팩토링 후에도 테스트가 통과하는가?
 - 코드가 개선되었는가?
-- pytest 실행 결과가 여전히 PASSED인가?
+- 테스트 실행 결과가 여전히 PASSED인가?
 
 🔄 다음 단계:
 - 이 기능의 다음 시나리오는 무엇인가?
@@ -278,7 +310,7 @@ model: sonnet
 - ❌ RED Phase에서 테스트 실패를 확인하지 않은 경우
 - ❌ GREEN Phase에서 테스트 통과를 확인하지 않은 경우
 - ❌ REFACTOR Phase에서 테스트 재실행을 하지 않은 경우
-- ❌ pytest 실행 로그를 확인하지 않은 경우
+- ❌ 테스트 프레임워크 실행 로그를 확인하지 않은 경우
 
 ---
 
@@ -320,9 +352,9 @@ model: sonnet
    - RED Phase: 각 테스트가 실패하는 것을 확인했는가?
    - RED Phase: 테스트 실패 이유가 예상과 일치했는가?
    - GREEN Phase: 최소한의 코드로 테스트를 통과시켰는가?
-   - GREEN Phase: 테스트 통과를 확인했는가? (pytest PASSED)
+   - GREEN Phase: 테스트 통과를 확인했는가? (PASSED)
    - REFACTOR Phase: 리팩토링 후 테스트가 계속 통과하는지 확인했는가?
-   - pytest 실행 로그를 각 Phase마다 확인했는가?
+   - 테스트 프레임워크 실행 로그를 각 Phase마다 확인했는가?
    - 테스트 없이 작성한 구현 코드가 없는가?
 
    📄 문서화 (Documentation)
@@ -438,7 +470,7 @@ model: sonnet
 - **Red-Green-Refactor 사이클 100% 준수**
 - 테스트 없이 구현 금지
 - 테스트 실패 확인 없이 다음 단계 진행 금지
-- pytest 실행 로그는 필수 확인 사항
+- 테스트 프레임워크 실행 로그는 필수 확인 사항
 - "나중에 테스트 작성" 또는 "테스트 스킵"은 절대 불가
 
 ---
@@ -479,10 +511,10 @@ model: sonnet
 
 6. **TDD 프로세스**
    - 테스트 우선 작성 (구현 코드보다 먼저)
-   - RED Phase 실패 확인 (pytest FAILED 확인)
+   - RED Phase 실패 확인 (테스트 FAILED 확인)
    - GREEN Phase 최소 구현 (YAGNI 원칙)
    - REFACTOR Phase 테스트 통과 유지
-   - pytest 실행 로그 확인
+   - 테스트 프레임워크 실행 로그 확인
    - 각 Phase마다 자가 질문에 답변
 
 ---
