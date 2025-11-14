@@ -11,7 +11,7 @@ class InfluencerModel(db.Model):
     __tablename__ = 'influencer'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), unique=True, nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)
     phone_number = db.Column(db.String(20), nullable=False)
@@ -22,6 +22,7 @@ class InfluencerModel(db.Model):
 
     # Relationships
     user = db.relationship('UserModel', back_populates='influencer')
+    applications = db.relationship('ApplicationModel', back_populates='influencer', cascade='all, delete')
 
     def __repr__(self):
         return f'<InfluencerModel {self.id}: {self.name}>'

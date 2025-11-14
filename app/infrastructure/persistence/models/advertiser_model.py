@@ -25,7 +25,7 @@ class AdvertiserModel(db.Model):
     __tablename__ = "advertiser"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(36), db.ForeignKey("user.id"), unique=True, nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)
     phone_number = db.Column(db.String(20), nullable=False)
@@ -37,7 +37,8 @@ class AdvertiserModel(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # 관계
-    user = db.relationship("UserModel", backref=db.backref("advertiser", uselist=False))
+    user = db.relationship("UserModel", back_populates="advertiser")
+    campaigns = db.relationship("CampaignModel", back_populates="advertiser", cascade="all, delete")
 
     def __repr__(self):
         return f"<AdvertiserModel(id={self.id}, user_id='{self.user_id}', business_name='{self.business_name}')>"
