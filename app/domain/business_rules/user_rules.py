@@ -1,6 +1,10 @@
 """User Business Rules (사용자 비즈니스 규칙)"""
 
 import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.domain.entities.user import User
 
 
 class UserRules:
@@ -35,3 +39,29 @@ class UserRules:
             return False
 
         return True
+
+    @staticmethod
+    def determine_redirect_url(user: 'User') -> str:
+        """
+        사용자 역할에 따른 리다이렉트 URL 결정
+
+        Args:
+            user: User 엔티티
+
+        Returns:
+            str: 리다이렉트 URL
+                - 역할 없음: '/role-selection'
+                - 광고주: '/advertiser/dashboard'
+                - 인플루언서: '/'
+
+        Raises:
+            ValueError: 알 수 없는 역할
+        """
+        if not user.has_role():
+            return '/role-selection'
+        elif user.role == 'advertiser':
+            return '/advertiser/dashboard'
+        elif user.role == 'influencer':
+            return '/'
+        else:
+            raise ValueError(f"Unknown role: {user.role}")

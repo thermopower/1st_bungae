@@ -3,7 +3,7 @@ Flask 애플리케이션 패키지 (Factory Pattern)
 """
 
 from flask import Flask
-from app.extensions import db
+from app.extensions import db, login_manager
 from app.config import Config
 
 
@@ -22,9 +22,17 @@ def create_app(config_class=Config):
 
     # 확장 초기화
     db.init_app(app)
+    login_manager.init_app(app)
 
     # Blueprint 등록
     from app.presentation.routes.auth_routes import auth_bp
+    from app.presentation.routes.main_routes import main_bp
+
+    app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
+
+    # UserModel import (user_loader 등록을 위해)
+    with app.app_context():
+        from app.infrastructure.persistence.models import user_model
 
     return app

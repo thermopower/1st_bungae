@@ -1,14 +1,16 @@
 """User ORM Model (데이터베이스 테이블)"""
 
-from app.extensions import db
+from app.extensions import db, login_manager
+from flask_login import UserMixin
 from datetime import datetime, UTC
 
 
-class UserModel(db.Model):
+class UserModel(db.Model, UserMixin):
     """
     사용자 ORM 모델 (users 테이블)
 
     Supabase Auth와 연동되는 사용자 인증 정보 저장
+    Flask-Login의 UserMixin을 상속하여 로그인 세션 관리 지원
     """
 
     __tablename__ = 'users'
@@ -31,3 +33,9 @@ class UserModel(db.Model):
 
     def __repr__(self):
         return f'<UserModel id={self.id} email={self.email} role={self.role}>'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Flask-Login user_loader 콜백"""
+    return UserModel.query.get(user_id)

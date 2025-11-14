@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}로그인 - 1st Bungae{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">로그인</h1>
+
+                    <!-- 서버 에러 메시지 -->
+                    <div id="server-error"></div>
+
+                    <!-- Flash 메시지 -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form id="login-form" method="POST" action="{{ url_for('auth.login') }}">
+                        {{ form.hidden_tag() }}
+
+                        <!-- 이메일 -->
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control", id="email", aria_describedby="email-error", autocomplete="email") }}
+                            <div id="email-error" class="invalid-feedback d-none" role="alert"></div>
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.email.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- 비밀번호 -->
+                        <div class="mb-3">
+                            {{ form.password.label(class="form-label") }}
+                            <div class="input-group">
+                                {{ form.password(class="form-control", id="password", aria_describedby="password-error", autocomplete="current-password") }}
+                                <button class="btn btn-outline-secondary toggle-password" type="button" id="toggle-password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div id="password-error" class="invalid-feedback d-none" role="alert"></div>
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.password.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- 로그인 버튼 -->
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary", id="submit-button") }}
+                        </div>
+
+                        <!-- 회원가입 링크 -->
+                        <div class="text-center mt-3">
+                            <p>계정이 없으신가요? <a href="{{ url_for('auth.register') }}">회원가입</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Screen Reader Announcement -->
+<div id="sr-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+<!-- CSRF Token for JavaScript -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pages/login.js') }}"></script>
+{% endblock %}

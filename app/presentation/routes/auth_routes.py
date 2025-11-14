@@ -1,13 +1,15 @@
 """Auth Routes (회원가입, 로그인)"""
 
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from app.presentation.forms.auth_forms import RegisterForm
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
+from flask_login import login_user, logout_user, current_user
+from app.presentation.forms.auth_forms import RegisterForm, LoginForm
 from app.application.services.auth_service import AuthService
 from app.infrastructure.repositories.user_repository import UserRepository
 from app.infrastructure.external.supabase.supabase_auth import SupabaseAuthProvider
 from app.domain.exceptions.auth_exceptions import (
     EmailAlreadyExistsException,
-    WeakPasswordException
+    WeakPasswordException,
+    InvalidCredentialsException
 )
 from app.domain.exceptions.validation_exceptions import InvalidEmailException
 
@@ -59,5 +61,56 @@ def register():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """로그인 페이지 (추후 구현)"""
-    return "로그인 페이지"
+    """
+    로그인 페이지
+
+    GET: 로그인 폼 표시
+    POST: 로그인 처리
+    """
+    # 이미 로그인된 사용자는 홈으로 리다이렉트
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        try:
+            # 로그인 처리
+            response = auth_service.login(
+                email=form.email.data,
+                password=form.password.data
+            )
+
+            # 세션에 토큰 저장
+            session['access_token'] = response.access_token
+            session['refresh_token'] = response.refresh_token
+            session['user_id'] = response.user_id
+
+            # Flask-Login 세션 설정
+            from app.infrastructure.persistence.models.user_model import UserModel
+            user_model = UserModel.query.get(response.user_id)
+            if user_model:
+                login_user(user_model)
+
+            flash('로그인에 성공했습니다!', 'success')
+            return redirect(response.redirect_url)
+
+        except InvalidCredentialsException:
+            flash('이메일 또는 비밀번호가 일치하지 않습니다.', 'danger')
+
+        except InvalidEmailException:
+            flash('올바른 이메일 형식이 아닙니다.', 'danger')
+
+        except Exception as e:
+            flash('로그인 중 오류가 발생했습니다. 다시 시도해주세요.', 'danger')
+
+    return render_template('auth/login.html', form=form)
+
+
+@auth_bp.route('/logout')
+def logout():
+    """로그아웃"""
+    logout_user()
+    session.clear()
+    flash('로그아웃되었습니다.', 'success')
+    return redirect(url_for('auth.login'))
