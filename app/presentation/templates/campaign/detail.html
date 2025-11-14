@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}{{ campaign.title }} - 1st Bungae{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- 뒤로 가기 버튼 -->
+    <div class="mb-3">
+        <a href="{{ url_for('main.home') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> 목록으로
+        </a>
+    </div>
+
+    <!-- 체험단 상세 정보 -->
+    <div class="row">
+        <!-- 왼쪽: 이미지 -->
+        <div class="col-md-6">
+            {% if campaign.image_url %}
+            <img src="{{ campaign.image_url }}" class="img-fluid rounded" alt="{{ campaign.title }}">
+            {% else %}
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                <i class="bi bi-image" style="font-size: 5rem;"></i>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 오른쪽: 정보 -->
+        <div class="col-md-6">
+            <h2>{{ campaign.title }}</h2>
+            <p class="text-muted">
+                <i class="bi bi-building"></i> {{ campaign.business_name }}<br>
+                <i class="bi bi-geo-alt"></i> {{ campaign.business_address }}
+            </p>
+
+            <hr>
+
+            <!-- 모집 정보 -->
+            <div class="mb-3">
+                <h5>모집 정보</h5>
+                <p>
+                    <i class="bi bi-people-fill"></i> 모집 인원: <strong>{{ campaign.quota }}명</strong> (현재 {{ campaign.application_count }}명 지원)<br>
+                    <i class="bi bi-calendar-event"></i> 모집 기간: {{ campaign.start_date.strftime('%Y-%m-%d') }} ~ {{ campaign.end_date.strftime('%Y-%m-%d') }}<br>
+                    <i class="bi bi-info-circle"></i> 상태:
+                    {% if campaign.status == 'RECRUITING' %}
+                        <span class="badge bg-success">모집 중</span>
+                    {% elif campaign.status == 'CLOSED' %}
+                        <span class="badge bg-secondary">모집 종료</span>
+                    {% elif campaign.status == 'SELECTED' %}
+                        <span class="badge bg-info">선정 완료</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- 지원하기 버튼 -->
+            {% if campaign.can_apply and not campaign.already_applied %}
+            <div class="d-grid gap-2">
+                <a href="{{ url_for('campaign.apply_campaign', campaign_id=campaign.id) }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-pencil-square"></i> 지원하기
+                </a>
+            </div>
+            {% elif campaign.already_applied %}
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-check-circle"></i> 이미 지원한 체험단입니다.
+            </div>
+            {% elif campaign.status != 'RECRUITING' %}
+            <div class="alert alert-secondary" role="alert">
+                <i class="bi bi-x-circle"></i> 모집이 종료된 체험단입니다.
+            </div>
+            {% else %}
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> 인플루언서 정보 등록 후 지원 가능합니다.
+            </div>
+            {% endif %}
+
+            <!-- 공유 버튼 -->
+            <div class="mt-3">
+                <button class="btn btn-outline-secondary" onclick="shareCurrentPage()">
+                    <i class="bi bi-share"></i> 공유하기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 상세 설명 -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h4>체험단 설명</h4>
+            <p style="white-space: pre-wrap;">{{ campaign.description }}</p>
+        </div>
+    </div>
+
+    <!-- 제공 혜택 -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4>제공 혜택</h4>
+            <p style="white-space: pre-wrap;">{{ campaign.benefits }}</p>
+        </div>
+    </div>
+
+    <!-- 체험 조건 -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4>체험 조건</h4>
+            <p style="white-space: pre-wrap;">{{ campaign.conditions }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function shareCurrentPage() {
+    // Web Share API 사용 (모바일 브라우저 지원)
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ campaign.title }}',
+            text: '{{ campaign.description[:100] }}...',
+            url: window.location.href
+        }).then(() => {
+            console.log('공유 성공');
+        }).catch((error) => {
+            console.error('공유 실패:', error);
+            copyToClipboard();
+        });
+    } else {
+        // Web Share API 미지원 시 클립보드에 복사
+        copyToClipboard();
+    }
+}
+
+function copyToClipboard() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+        alert('링크가 클립보드에 복사되었습니다!');
+    }).catch((error) => {
+        console.error('클립보드 복사 실패:', error);
+        alert('링크 복사에 실패했습니다.');
+    });
+}
+</script>
+{% endblock %}
