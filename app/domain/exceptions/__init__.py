@@ -21,6 +21,11 @@ from app.domain.exceptions.advertiser_exceptions import (
     AdvertiserAlreadyRegisteredException,
     BusinessNumberAlreadyExistsException,
 )
+from app.domain.exceptions.application_exceptions import (
+    AlreadyAppliedException,
+    CampaignNotRecruitingException,
+    InfluencerNotRegisteredException,
+)
 
 __all__ = [
     # Base Exception
@@ -38,4 +43,8 @@ __all__ = [
     # Advertiser Exceptions
     "AdvertiserAlreadyRegisteredException",
     "BusinessNumberAlreadyExistsException",
+    # Application Exceptions
+    "AlreadyAppliedException",
+    "CampaignNotRecruitingException",
+    "InfluencerNotRegisteredException",
 ]

@@ -221,3 +221,97 @@ class CampaignService:
         total_count = self.campaign_repository.count_recruiting_campaigns()
 
         return (campaign_dtos, total_count)
+
+    def close_campaign_early(self, campaign_id: int, advertiser_id: int) -> None:
+        """
+        체험단 모집 조기종료
+
+        Args:
+            campaign_id: 체험단 ID
+            advertiser_id: 광고주 ID (권한 검증용)
+
+        Raises:
+            CampaignNotFoundException: 체험단이 존재하지 않음
+            CampaignNotOwnedException: 체험단 소유권이 없음
+            CampaignAlreadyClosedException: 이미 종료된 체험단
+        """
+        from app.domain.entities.campaign import CampaignStatus
+        from app.domain.exceptions.campaign_exceptions import (
+            CampaignNotFoundException,
+            CampaignNotOwnedException,
+            CampaignAlreadyClosedException,
+        )
+        from datetime import datetime
+
+        # 체험단 조회
+        campaign = self.campaign_repository.find_by_id(campaign_id)
+        if campaign is None:
+            raise CampaignNotFoundException("체험단을 찾을 수 없습니다")
+
+        # 소유권 검증
+        if campaign.advertiser_id != advertiser_id:
+            raise CampaignNotOwnedException("이 체험단에 대한 권한이 없습니다")
+
+        # 모집 중 상태 검증
+        if not campaign.is_recruiting():
+            raise CampaignAlreadyClosedException("이미 종료된 체험단입니다")
+
+        # 상태 업데이트
+        campaign.status = CampaignStatus.CLOSED
+        campaign.closed_at = datetime.utcnow()
+
+        # 저장
+        self.campaign_repository.save(campaign)
+
+    def get_campaign_applications(
+        self, campaign_id: int, advertiser_id: int
+    ) -> List[dict]:
+        """
+        체험단의 지원자 목록 조회 (인플루언서 정보 포함)
+
+        Args:
+            campaign_id: 체험단 ID
+            advertiser_id: 광고주 ID (권한 검증용)
+
+        Returns:
+            지원자 정보 리스트 (Application + Influencer 정보)
+
+        Raises:
+            CampaignNotFoundException: 체험단이 존재하지 않음
+            CampaignNotOwnedException: 체험단 소유권이 없음
+        """
+        from app.domain.exceptions.campaign_exceptions import (
+            CampaignNotFoundException,
+            CampaignNotOwnedException,
+        )
+
+        # 체험단 조회
+        campaign = self.campaign_repository.find_by_id(campaign_id)
+        if campaign is None:
+            raise CampaignNotFoundException("체험단을 찾을 수 없습니다")
+
+        # 소유권 검증
+        if campaign.advertiser_id != advertiser_id:
+            raise CampaignNotOwnedException("이 체험단에 대한 권한이 없습니다")
+
+        # 지원자 목록 조회
+        applications = self.application_repository.find_by_campaign_id(campaign_id)
+
+        # 인플루언서 정보 포함
+        result = []
+        for application in applications:
+            influencer = self.influencer_repository.find_by_id(application.influencer_id)
+            if influencer:
+                result.append({
+                    "application_id": application.id,
+                    "influencer_id": influencer.id,
+                    "influencer_name": influencer.name,
+                    "channel_name": influencer.channel_name,
+                    "channel_url": influencer.channel_url,
+                    "follower_count": influencer.follower_count,
+                    "application_reason": application.application_reason,
+                    "applied_at": application.applied_at,
+                    "status": application.status,
+                })
+
+        return result
