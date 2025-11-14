@@ -17,6 +17,10 @@ from app.domain.exceptions.auth_exceptions import (
     InvalidCredentialsException,
     UnauthorizedException,
 )
+from app.domain.exceptions.advertiser_exceptions import (
+    AdvertiserAlreadyRegisteredException,
+    BusinessNumberAlreadyExistsException,
+)
 
 __all__ = [
     # Base Exception
@@ -31,4 +35,7 @@ __all__ = [
     "InvalidCredentialsException",
     "EmailAlreadyExistsException",
     "UnauthorizedException",
+    # Advertiser Exceptions
+    "AdvertiserAlreadyRegisteredException",
+    "BusinessNumberAlreadyExistsException",
 ]
