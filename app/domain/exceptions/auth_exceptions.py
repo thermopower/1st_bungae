@@ -72,3 +72,18 @@ class UnauthorizedException(DomainException):
         """UnauthorizedException 초기화"""
         message = "Unauthorized access"
         super().__init__(message=message, http_status_code=403)
+
+
+class WeakPasswordException(DomainException):
+    """
+    비밀번호 강도 미달 예외
+
+    비밀번호가 강도 요구사항을 충족하지 못한 경우 발생
+
+    HTTP Status Code: 400 Bad Request
+    """
+
+    def __init__(self):
+        """WeakPasswordException 초기화"""
+        message = "Password does not meet strength requirements (minimum 8 characters, must contain letters and numbers)"
+        super().__init__(message=message, http_status_code=400)
