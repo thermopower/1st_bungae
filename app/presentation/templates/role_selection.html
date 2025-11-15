@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}역할 선택 - 1st Bungae{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">역할을 선택해주세요</h2>
+                    <p class="text-center text-muted mb-5">
+                        광고주와 인플루언서 중 원하시는 역할을 선택해주세요.
+                    </p>
+
+                    <form method="POST" action="{{ url_for('main.role_selection') }}">
+                        <div class="row g-4">
+                            <!-- 광고주 선택 카드 -->
+                            <div class="col-md-6">
+                                <label class="role-card" for="advertiser">
+                                    <input type="radio" name="role" value="advertiser" id="advertiser" required>
+                                    <div class="card h-100 text-center p-4 border-2">
+                                        <div class="card-body d-flex flex-column justify-content-center">
+                                            <i class="bi bi-building fs-1 text-primary mb-3"></i>
+                                            <h4 class="card-title mb-3">광고주</h4>
+                                            <p class="card-text text-muted">
+                                                체험단을 모집하고<br>
+                                                인플루언서와 협업합니다
+                                            </p>
+                                            <ul class="list-unstyled mt-3 text-start">
+                                                <li><i class="bi bi-check-circle text-success me-2"></i>체험단 등록</li>
+                                                <li><i class="bi bi-check-circle text-success me-2"></i>지원자 관리</li>
+                                                <li><i class="bi bi-check-circle text-success me-2"></i>리뷰 관리</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- 인플루언서 선택 카드 -->
+                            <div class="col-md-6">
+                                <label class="role-card" for="influencer">
+                                    <input type="radio" name="role" value="influencer" id="influencer" required>
+                                    <div class="card h-100 text-center p-4 border-2">
+                                        <div class="card-body d-flex flex-column justify-content-center">
+                                            <i class="bi bi-person-video3 fs-1 text-success mb-3"></i>
+                                            <h4 class="card-title mb-3">인플루언서</h4>
+                                            <p class="card-text text-muted">
+                                                체험단에 지원하고<br>
+                                                리뷰를 작성합니다
+                                            </p>
+                                            <ul class="list-unstyled mt-3 text-start">
+                                                <li><i class="bi bi-check-circle text-success me-2"></i>체험단 지원</li>
+                                                <li><i class="bi bi-check-circle text-success me-2"></i>제품 체험</li>
+                                                <li><i class="bi bi-check-circle text-success me-2"></i>리뷰 작성</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                다음 단계로
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.role-card {
+    cursor: pointer;
+    display: block;
+}
+
+.role-card input[type="radio"] {
+    display: none;
+}
+
+.role-card .card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.role-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.role-card input[type="radio"]:checked + .card {
+    border-color: #0d6efd !important;
+    background-color: #f8f9fa;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+</style>
+{% endblock %}
