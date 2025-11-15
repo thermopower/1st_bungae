@@ -7,12 +7,20 @@ import sys
 # 현재 디렉토리를 Python 경로에 추가
 sys.path.insert(0, os.path.dirname(__file__))
 
+# 환경변수 로드 (.env 파일이 있을 경우)
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask_migrate import Migrate, init, migrate as migrate_cmd, upgrade
 from app import create_app
 from app.extensions import db
 
 # Flask 앱 생성
-app = create_app()
+try:
+    app = create_app()
+except Exception as e:
+    print(f"❌ Flask 앱 생성 실패: {e}", file=sys.stderr)
+    sys.exit(1)
 
 # Flask-Migrate 초기화
 migration = Migrate(app, db)

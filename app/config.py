@@ -16,7 +16,11 @@ class Config:
     SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY')
 
     # 데이터베이스 설정 (SQLAlchemy - 로컬 개발용)
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
+    # Render는 postgres:// 로 제공하지만 SQLAlchemy는 postgresql:// 필요
+    database_url = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    SQLALCHEMY_DATABASE_URI = database_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # CORS 설정
