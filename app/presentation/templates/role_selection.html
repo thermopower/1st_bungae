@@ -14,7 +14,7 @@
                     </p>
 
                     <form method="POST" action="{{ url_for('main.role_selection') }}">
-                        {{ csrf_token() }}
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <div class="row g-4">
                             <!-- 광고주 선택 카드 -->
                             <div class="col-md-6">
