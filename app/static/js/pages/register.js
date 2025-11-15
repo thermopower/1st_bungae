@@ -352,8 +352,9 @@ document.addEventListener('DOMContentLoaded', function() {
         renderSubmitButton();
         announceToScreenReader('회원가입을 진행 중입니다.');
 
-        // 폼 제출 (일반 HTML form submit)
-        form.submit();
+        // 폼 제출 (HTMLFormElement.prototype.submit 사용)
+        // Note: form.submit()은 id="submit-button"과 충돌하므로 prototype 사용
+        HTMLFormElement.prototype.submit.call(form);
     });
 });
 
