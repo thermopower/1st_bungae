@@ -35,26 +35,38 @@ def register():
 
     if form.validate_on_submit():
         try:
+            print(f"[DEBUG] 회원가입 시도 - Email: {form.email.data}")
+
             # 회원가입 처리
             response = auth_service.register(
                 email=form.email.data,
                 password=form.password.data
             )
 
+            print(f"[DEBUG] 회원가입 성공 - User ID: {response.user_id}")
             flash('회원가입이 완료되었습니다! 로그인해주세요.', 'success')
             return redirect(url_for('auth.login'))
 
-        except EmailAlreadyExistsException:
+        except EmailAlreadyExistsException as e:
+            print(f"[DEBUG] 이메일 중복: {form.email.data}")
             flash('이미 사용 중인 이메일입니다.', 'danger')
 
-        except WeakPasswordException:
+        except WeakPasswordException as e:
+            print(f"[DEBUG] 비밀번호 강도 미달")
             flash('비밀번호는 최소 8자 이상이며 영문과 숫자를 포함해야 합니다.', 'danger')
 
-        except InvalidEmailException:
+        except InvalidEmailException as e:
+            print(f"[DEBUG] 이메일 형식 오류: {form.email.data}")
             flash('올바른 이메일 형식이 아닙니다.', 'danger')
 
         except Exception as e:
+            print(f"[ERROR] 회원가입 중 오류 발생: {type(e).__name__}: {str(e)}")
+            import traceback
+            traceback.print_exc()
             flash('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.', 'danger')
+    else:
+        if request.method == 'POST':
+            print(f"[DEBUG] 폼 검증 실패: {form.errors}")
 
     return render_template('auth/register.html', form=form)
 

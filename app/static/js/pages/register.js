@@ -335,7 +335,37 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // 폼 제출 이벤트
+    const form = document.getElementById('register-form');
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // 유효성 검사
+        if (!validateForm()) {
+            announceToScreenReader('입력 내용을 확인해주세요.');
+            return;
+        }
+
+        // 제출 시작
+        formState.isSubmitting = true;
+        renderSubmitButton();
+        announceToScreenReader('회원가입을 진행 중입니다.');
+
+        // 폼 제출 (일반 HTML form submit)
+        form.submit();
+    });
 });
+
+/**
+ * 스크린 리더 안내
+ */
+function announceToScreenReader(message) {
+    const srElement = document.getElementById('sr-announcement');
+    if (srElement) {
+        srElement.textContent = message;
+    }
+}
 
 function isLoggedIn() {
     return document.cookie.includes('session=');

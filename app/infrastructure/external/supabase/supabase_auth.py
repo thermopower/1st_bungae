@@ -43,20 +43,26 @@ class SupabaseAuthProvider(IAuthProvider):
             WeakPasswordException: 비밀번호 강도 미달
         """
         try:
+            print(f"[DEBUG] Supabase Auth - 회원가입 요청: {email}")
             response = self.client.auth.sign_up({
                 "email": email,
                 "password": password
             })
 
+            print(f"[DEBUG] Supabase Auth - 응답 객체: {response}")
+
             if response.user is None:
+                print(f"[ERROR] Supabase Auth - User가 None임")
                 raise Exception("User creation failed")
 
+            print(f"[DEBUG] Supabase Auth - 회원가입 성공: User ID={response.user.id}")
             return AuthUserCreationResult(
                 user_id=response.user.id,
                 email=response.user.email
             )
 
         except Exception as e:
+            print(f"[ERROR] Supabase Auth - 예외 발생: {type(e).__name__}: {str(e)}")
             error_message = str(e).lower()
 
             # 이메일 중복 검증
