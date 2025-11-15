@@ -5,7 +5,7 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from app.config import Config
-from app.extensions import db, login_manager, cors
+from app.extensions import db, migrate, login_manager, cors
 from app.routes import auth, main, advertiser, influencer
 
 # 환경변수 로드
@@ -21,6 +21,7 @@ def create_app(config_class=Config):
 
     # 확장 초기화
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
     cors.init_app(app)
 
@@ -29,10 +30,6 @@ def create_app(config_class=Config):
     app.register_blueprint(auth.bp)
     app.register_blueprint(advertiser.bp)
     app.register_blueprint(influencer.bp)
-
-    # 데이터베이스 테이블 생성
-    with app.app_context():
-        db.create_all()
 
     return app
 

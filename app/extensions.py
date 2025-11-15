@@ -2,11 +2,15 @@
 Flask 확장 초기화
 """
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_cors import CORS
 
 # SQLAlchemy 인스턴스
 db = SQLAlchemy()
+
+# Flask-Migrate 인스턴스
+migrate = Migrate()
 
 # Flask-Login 설정
 login_manager = LoginManager()
