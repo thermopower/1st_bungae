@@ -14,7 +14,9 @@ load_dotenv()
 
 def create_app(config_class=Config):
     """Flask 애플리케이션 팩토리"""
-    app = Flask(__name__)
+    app = Flask(__name__,
+                template_folder='app/templates',
+                static_folder='app/static')
     app.config.from_object(config_class)
 
     # 확장 초기화
