@@ -3,7 +3,7 @@ Flask 애플리케이션 패키지 (Factory Pattern)
 """
 
 from flask import Flask
-from app.extensions import db, migrate, login_manager, cors
+from app.extensions import db, migrate, login_manager, cors, csrf
 from app.config import Config
 
 
@@ -27,6 +27,7 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     cors.init_app(app)
+    csrf.init_app(app)
 
     # Blueprint 등록
     from app.presentation.routes.auth_routes import auth_bp

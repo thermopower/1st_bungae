@@ -37,8 +37,8 @@ def test_all_pages():
                 title = page.title()
 
                 if status == 200:
-                    print(f"  ✓ Status: {status}")
-                    print(f"  ✓ Title: {title}")
+                    print(f"  [OK] Status: {status}")
+                    print(f"  [OK] Title: {title}")
                     results.append({
                         'url': url,
                         'status': status,
@@ -46,8 +46,8 @@ def test_all_pages():
                         'success': True
                     })
                 else:
-                    print(f"  ✗ Status: {status}")
-                    print(f"  ✗ Title: {title}")
+                    print(f"  [FAIL] Status: {status}")
+                    print(f"  [FAIL] Title: {title}")
                     results.append({
                         'url': url,
                         'status': status,
@@ -56,7 +56,7 @@ def test_all_pages():
                     })
 
             except Exception as e:
-                print(f"  ✗ Error: {str(e)[:100]}")
+                print(f"  [ERROR] Error: {str(e)[:100]}")
                 results.append({
                     'url': url,
                     'error': str(e),
@@ -75,10 +75,10 @@ def test_all_pages():
 
         for result in results:
             if result.get('success'):
-                print(f"✓ {result['url']} - OK ({result.get('status', 'N/A')})")
+                print(f"[PASS] {result['url']} - OK ({result.get('status', 'N/A')})")
             else:
                 error_msg = result.get('error', f"Status {result.get('status', 'N/A')}")
-                print(f"✗ {result['url']} - FAIL ({error_msg[:50]})")
+                print(f"[FAIL] {result['url']} - FAIL ({error_msg[:50]})")
 
         print(f"\nTotal: {success_count}/{total_count} pages passed")
         print("=" * 60)

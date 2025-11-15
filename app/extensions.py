@@ -5,12 +5,16 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_cors import CORS
+from flask_wtf.csrf import CSRFProtect
 
 # SQLAlchemy 인스턴스
 db = SQLAlchemy()
 
 # Flask-Migrate 인스턴스
 migrate = Migrate()
+
+# CSRF 보호
+csrf = CSRFProtect()
 
 # Flask-Login 설정
 login_manager = LoginManager()
