@@ -21,8 +21,8 @@ login_manager.login_message = '로그인이 필요합니다.'
 @login_manager.user_loader
 def load_user(user_id):
     """Flask-Login user_loader"""
-    from app.models.user import User
-    return User.query.get(int(user_id))
+    from app.infrastructure.persistence.models.user_model import User
+    return User.query.get(user_id)
 
 
 # CORS 설정

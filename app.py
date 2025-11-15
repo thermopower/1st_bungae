@@ -1,42 +1,16 @@
 """
-Flask 애플리케이션 진입점
+Flask 애플리케이션 진입점 (새로운 계층형 구조 사용)
 """
-import os
-from flask import Flask
 from dotenv import load_dotenv
-from app.config import Config
-from app.extensions import db, migrate, login_manager, cors
-from app.routes import auth, main, advertiser, influencer
 
 # 환경변수 로드
 load_dotenv()
 
+# app/__init__.py의 create_app 사용
+from app import create_app
 
-def create_app(config_class=Config):
-    """Flask 애플리케이션 팩토리"""
-    app = Flask(__name__,
-                template_folder='app/templates',
-                static_folder='app/static')
-    app.config.from_object(config_class)
-
-    # 확장 초기화
-    db.init_app(app)
-    migrate.init_app(app, db)
-    login_manager.init_app(app)
-    cors.init_app(app)
-
-    # 블루프린트 등록
-    app.register_blueprint(main.bp)
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(advertiser.bp)
-    app.register_blueprint(influencer.bp)
-
-    return app
-
-
-# Render/Gunicorn을 위한 애플리케이션 인스턴스
+# Flask 애플리케이션 생성
 app = create_app()
-
 
 if __name__ == '__main__':
     app.run(debug=True)
