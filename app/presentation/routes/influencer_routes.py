@@ -33,6 +33,9 @@ def register_influencer():
             user_repo = UserRepository()
             influencer_service = InfluencerService(influencer_repo, user_repo)
 
+            # 채널 타입은 현재 DB에 저장하지 않음 (향후 확장 가능)
+            # channel_type = form.channel_type.data
+
             # 인플루언서 정보 등록
             influencer = influencer_service.register_influencer(
                 user_id=current_user.id,
