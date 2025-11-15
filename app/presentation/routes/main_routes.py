@@ -85,9 +85,9 @@ def role_selection():
 
             # 역할에 따라 리다이렉트
             if role == 'advertiser':
-                return redirect(url_for('advertiser.register_info'))
+                return redirect(url_for('advertiser.register_advertiser'))
             else:
-                return redirect(url_for('influencer.register_info'))
+                return redirect(url_for('influencer.register_influencer'))
         else:
             flash('사용자 정보를 찾을 수 없습니다.', 'danger')
 

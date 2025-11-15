@@ -6,15 +6,22 @@ Pytest 설정 및 공통 픽스처
 import pytest
 import sys
 import os
+from unittest.mock import Mock, MagicMock, patch
 
 # 프로젝트 루트를 Python 경로에 추가
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
 # 테스트용 환경 변수 설정
-os.environ['SUPABASE_URL'] = 'https://test.supabase.co'
-os.environ['SUPABASE_KEY'] = 'test-key'
+os.environ['SUPABASE_URL'] = 'https://eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTYwOTQ1OTIwMCwiZXhwIjoxOTI1MDM1MjAwfQ.test'
+os.environ['SUPABASE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTYwOTQ1OTIwMCwiZXhwIjoxOTI1MDM1MjAwfQ.test-key-test-key-test-key-test-key-test'
 os.environ['DATABASE_URL'] = 'sqlite:///:memory:'
+
+# Supabase Client Mock (모듈 임포트 전에 Mock 설정)
+mock_supabase_client = MagicMock()
+sys.modules['supabase'] = MagicMock()
+sys.modules['supabase._sync'] = MagicMock()
+sys.modules['supabase._sync.client'] = MagicMock()
 
 from app.config import Config
 
