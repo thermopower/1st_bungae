@@ -12,17 +12,18 @@ app = create_app()
 with app.app_context():
     print("Supabase 기존 테이블 삭제 중...")
 
-    # 테이블 삭제 (외래 키 제약 조건 때문에 순서 중요)
-    tables_to_drop = [
-        'application',
-        'campaign',
-        'influencer',
-        'advertiser',
-        'users',
-        'alembic_version'  # 마이그레이션 버전 테이블도 삭제
-    ]
+    # 먼저 public 스키마의 모든 테이블 조회
+    result = db.session.execute(db.text("""
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+    """))
 
-    for table_name in tables_to_drop:
+    all_tables = [row[0] for row in result]
+    print(f"Found {len(all_tables)} tables to drop: {', '.join(all_tables)}\n")
+
+    # 모든 테이블을 CASCADE로 삭제
+    for table_name in all_tables:
         try:
             db.session.execute(db.text(f'DROP TABLE IF EXISTS {table_name} CASCADE'))
             print(f"  [OK] {table_name} deleted")
