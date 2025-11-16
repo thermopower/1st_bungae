@@ -8,6 +8,9 @@
 # SOT(Source Of Truth) Design
 docs폴더의 문서를 참고하여 프로그램 구조를 파악하세요. docs/external에는 외부서비스 연동 관련 문서가 있으니 필요시 확인하여 파악하세요.
 
+## Workflow Guard
+- 신규 훅이나 자동화 스크립트를 추가할 때는 기존 개발 흐름을 방해하지 않도록 필수 메시지와 최소 부수 효과만 남기고 자연스럽게 동작하게 구성하세요.
+
 ---
 
 # Codebase Structure
