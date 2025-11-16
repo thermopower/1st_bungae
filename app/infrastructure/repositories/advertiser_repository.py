@@ -1,11 +1,11 @@
 """Advertiser Repository 구현체"""
 
 from typing import Optional
+from sqlalchemy.orm import Session
 from app.domain.entities.advertiser import Advertiser
 from app.infrastructure.repositories.interfaces.i_advertiser_repository import IAdvertiserRepository
 from app.infrastructure.persistence.models.advertiser_model import AdvertiserModel
 from app.infrastructure.persistence.mappers.advertiser_mapper import AdvertiserMapper
-from app.extensions import db
 
 
 class AdvertiserRepository(IAdvertiserRepository):
@@ -14,6 +14,13 @@ class AdvertiserRepository(IAdvertiserRepository):
 
     SQLAlchemy를 사용하여 데이터베이스 접근을 담당합니다.
     """
+
+    def __init__(self, session: Session):
+        """
+        Args:
+            session: SQLAlchemy Session
+        """
+        self.session = session
 
     def save(self, advertiser: Advertiser) -> Advertiser:
         """
@@ -26,8 +33,8 @@ class AdvertiserRepository(IAdvertiserRepository):
             Advertiser: 저장된 광고주 엔티티 (ID 포함)
         """
         model = AdvertiserMapper.to_model(advertiser)
-        db.session.add(model)
-        db.session.flush()  # ID 생성을 위해 flush
+        self.session.add(model)
+        self.session.flush()  # ID 생성을 위해 flush
 
         return AdvertiserMapper.to_entity(model)
 
@@ -41,7 +48,7 @@ class AdvertiserRepository(IAdvertiserRepository):
         Returns:
             Optional[Advertiser]: 광고주 엔티티 (없으면 None)
         """
-        model = AdvertiserModel.query.filter_by(user_id=user_id).first()
+        model = self.session.query(AdvertiserModel).filter_by(user_id=user_id).first()
         return AdvertiserMapper.to_entity(model) if model else None
 
     def exists_by_business_number(self, business_number: str) -> bool:
@@ -54,7 +61,7 @@ class AdvertiserRepository(IAdvertiserRepository):
         Returns:
             bool: 존재하면 True, 아니면 False
         """
-        count = AdvertiserModel.query.filter_by(business_number=business_number).count()
+        count = self.session.query(AdvertiserModel).filter_by(business_number=business_number).count()
         return count > 0
 
     def find_by_id(self, advertiser_id: int) -> Optional[Advertiser]:
@@ -67,5 +74,5 @@ class AdvertiserRepository(IAdvertiserRepository):
         Returns:
             Optional[Advertiser]: 광고주 엔티티 (없으면 None)
         """
-        model = AdvertiserModel.query.get(advertiser_id)
+        model = self.session.get(AdvertiserModel, advertiser_id)
         return AdvertiserMapper.to_entity(model) if model else None
