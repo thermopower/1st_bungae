@@ -2,7 +2,12 @@
 Supabase 현재 테이블 목록 확인
 """
 import sys
-sys.path.insert(0, '.')
+import os
+
+# 프로젝트 루트 디렉토리를 Python 경로에 추가
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(script_dir)
+sys.path.insert(0, project_root)
 
 from app import create_app
 from app.extensions import db
