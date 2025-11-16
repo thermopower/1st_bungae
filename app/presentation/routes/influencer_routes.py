@@ -28,9 +28,11 @@ def register_influencer():
 
     if form.validate_on_submit():
         try:
+            from app.extensions import db
+
             # Service 인스턴스 생성 (DI)
-            influencer_repo = InfluencerRepository()
-            user_repo = UserRepository()
+            influencer_repo = InfluencerRepository(db.session)
+            user_repo = UserRepository(db.session)
             influencer_service = InfluencerService(influencer_repo, user_repo)
 
             # 채널 타입은 현재 DB에 저장하지 않음 (향후 확장 가능)

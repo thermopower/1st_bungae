@@ -27,11 +27,13 @@ def advertiser_required(f):
     @wraps(f)
     @login_required
     def decorated_function(*args, **kwargs):
+        from app.extensions import db
+
         # 사용자 ID 가져오기
         user_id = current_user.id
 
         # Advertiser 정보 조회
-        advertiser_repo = AdvertiserRepository()
+        advertiser_repo = AdvertiserRepository(db.session)
         advertiser = advertiser_repo.find_by_user_id(user_id)
 
         if not advertiser:
@@ -62,11 +64,13 @@ def influencer_required(f):
     @wraps(f)
     @login_required
     def decorated_function(*args, **kwargs):
+        from app.extensions import db
+
         # 사용자 ID 가져오기
         user_id = current_user.id
 
         # Influencer 정보 조회
-        influencer_repo = InfluencerRepository()
+        influencer_repo = InfluencerRepository(db.session)
         influencer = influencer_repo.find_by_user_id(user_id)
 
         if not influencer:

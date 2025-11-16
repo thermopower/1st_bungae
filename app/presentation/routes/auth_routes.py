@@ -17,11 +17,6 @@ from app.domain.exceptions.validation_exceptions import InvalidEmailException
 # Blueprint 생성
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-# 의존성 주입 (추후 Flask 앱 팩토리에서 처리)
-user_repository = UserRepository()
-auth_provider = SupabaseAuthProvider()
-auth_service = AuthService(user_repository, auth_provider)
-
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -35,6 +30,13 @@ def register():
 
     if form.validate_on_submit():
         try:
+            from app.extensions import db
+
+            # Service 인스턴스 생성
+            user_repository = UserRepository(db.session)
+            auth_provider = SupabaseAuthProvider()
+            auth_service = AuthService(user_repository, auth_provider)
+
             print(f"[DEBUG] 회원가입 시도 - Email: {form.email.data}")
 
             # 회원가입 처리
@@ -87,6 +89,13 @@ def login():
 
     if form.validate_on_submit():
         try:
+            from app.extensions import db
+
+            # Service 인스턴스 생성
+            user_repository = UserRepository(db.session)
+            auth_provider = SupabaseAuthProvider()
+            auth_service = AuthService(user_repository, auth_provider)
+
             # 로그인 처리
             response = auth_service.login(
                 email=form.email.data,

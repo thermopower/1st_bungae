@@ -75,7 +75,8 @@ def role_selection():
             return render_template('role_selection.html')
 
         # 역할 저장
-        user_repository = UserRepository()
+        from app.extensions import db
+        user_repository = UserRepository(db.session)
         user = user_repository.find_by_id(current_user.id)
         if user:
             user.role = role
