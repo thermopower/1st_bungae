@@ -1,5 +1,6 @@
 """
 Supabase 클라이언트 유틸리티
+Infrastructure Layer - External Services
 """
 import os
 from supabase import create_client, Client
