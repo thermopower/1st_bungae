@@ -18,7 +18,6 @@ from app.shared.decorators.auth_decorators import influencer_required
 from app.domain.exceptions.application_exceptions import (
     AlreadyAppliedException,
     CampaignNotRecruitingException,
-    InfluencerNotRegisteredException,
 )
 from app.domain.exceptions.campaign_exceptions import CampaignNotFoundException
 
@@ -51,11 +50,17 @@ def campaign_detail(campaign_id: int):
         application_repository=application_repository
     )
 
-    # 현재 로그인한 사용자 ID 가져오기 (session)
+    # 현재 로그인한 사용자 ID 및 역할 가져오기
     user_id = session.get('user_id')
+    user_role = None
+    if user_id:
+        from app.infrastructure.persistence.models.user_model import UserModel
+        user = db.session.get(UserModel, user_id)
+        if user:
+            user_role = user.role
 
-    # 체험단 상세 조회
-    campaign = campaign_service.get_campaign_detail(campaign_id, user_id)
+    # 체험단 상세 조회 (user_role 전달)
+    campaign = campaign_service.get_campaign_detail(campaign_id, user_id, user_role)
 
     if campaign is None:
         abort(404, description="체험단을 찾을 수 없습니다.")

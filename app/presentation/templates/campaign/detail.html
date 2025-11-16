@@ -51,25 +51,61 @@
                 </p>
             </div>
 
-            <!-- 지원하기 버튼 -->
-            {% if campaign.can_apply and not campaign.already_applied %}
-            <div class="d-grid gap-2">
-                <a href="{{ url_for('campaign.apply_campaign', campaign_id=campaign.id) }}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-pencil-square"></i> 지원하기
-                </a>
-            </div>
-            {% elif campaign.already_applied %}
-            <div class="alert alert-info" role="alert">
-                <i class="bi bi-check-circle"></i> 이미 지원한 체험단입니다.
-            </div>
+            <!-- 지원하기 버튼 영역 -->
+            {% if not campaign.is_authenticated %}
+                <!-- 미로그인 사용자 -->
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> 로그인이 필요합니다
+                </div>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> 로그인
+                    </a>
+                </div>
+            {% elif campaign.is_owner %}
+                <!-- 광고주 본인 체험단 -->
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('advertiser.campaign_detail', campaign_id=campaign.id) }}" class="btn btn-success btn-lg">
+                        <i class="bi bi-gear"></i> 관리하기
+                    </a>
+                </div>
+            {% elif campaign.user_role == 'influencer' %}
+                <!-- 인플루언서 사용자 -->
+                {% if campaign.can_apply and not campaign.already_applied %}
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('campaign.apply_campaign', campaign_id=campaign.id) }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-pencil-square"></i> 지원하기
+                    </a>
+                </div>
+                {% elif campaign.already_applied %}
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-check-circle"></i> 이미 지원한 체험단입니다.
+                </div>
+                {% elif campaign.status != 'RECRUITING' %}
+                <div class="alert alert-secondary" role="alert">
+                    <i class="bi bi-x-circle"></i> 모집이 종료되었습니다
+                </div>
+                {% elif not campaign.can_apply %}
+                <!-- 인플루언서 정보 미등록 -->
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> 인플루언서 정보를 먼저 등록해주세요
+                </div>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('influencer.register_influencer') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-person-plus"></i> 정보 등록하기
+                    </a>
+                </div>
+                {% endif %}
+            {% elif campaign.user_role == 'advertiser' %}
+                <!-- 광고주이지만 본인 체험단이 아님 -->
+                <div class="alert alert-secondary" role="alert">
+                    <i class="bi bi-info-circle"></i> 광고주는 체험단에 지원할 수 없습니다
+                </div>
             {% elif campaign.status != 'RECRUITING' %}
-            <div class="alert alert-secondary" role="alert">
-                <i class="bi bi-x-circle"></i> 모집이 종료된 체험단입니다.
-            </div>
-            {% else %}
-            <div class="alert alert-warning" role="alert">
-                <i class="bi bi-exclamation-triangle"></i> 인플루언서 정보 등록 후 지원 가능합니다.
-            </div>
+                <!-- 모집 종료 -->
+                <div class="alert alert-secondary" role="alert">
+                    <i class="bi bi-x-circle"></i> 모집이 종료되었습니다
+                </div>
             {% endif %}
 
             <!-- 공유 버튼 -->

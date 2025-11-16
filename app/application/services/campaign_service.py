@@ -124,7 +124,7 @@ class CampaignService:
         return campaign_dtos
 
     def get_campaign_detail(
-        self, campaign_id: int, user_id: Optional[str] = None
+        self, campaign_id: int, user_id: Optional[str] = None, user_role: Optional[str] = None
     ) -> Optional[CampaignDetailDTO]:
         """
         체험단 상세 정보 조회
@@ -132,6 +132,7 @@ class CampaignService:
         Args:
             campaign_id: 체험단 ID
             user_id: 사용자 ID (로그인 시)
+            user_role: 사용자 역할 (advertiser/influencer/None)
 
         Returns:
             CampaignDetailDTO 또는 None
@@ -146,11 +147,24 @@ class CampaignService:
         # 지원자 수 조회
         application_count = self.campaign_repository.get_application_count(campaign_id)
 
+        # 로그인 여부
+        is_authenticated = user_id is not None
+
+        # 소유자 여부 확인 (광고주 역할인 경우)
+        is_owner = False
+        if user_role == 'advertiser' and user_id:
+            from app.infrastructure.repositories.advertiser_repository import AdvertiserRepository
+            from app.extensions import db
+            advertiser_repo = AdvertiserRepository(db.session)
+            advertiser = advertiser_repo.find_by_user_id(user_id)
+            if advertiser and advertiser.id == campaign.advertiser_id:
+                is_owner = True
+
         # 지원 가능 여부 확인
         can_apply = False
         already_applied = False
 
-        if user_id and self.influencer_repository and self.application_repository:
+        if user_role == 'influencer' and user_id and self.influencer_repository and self.application_repository:
             # 인플루언서 정보 확인
             influencer = self.influencer_repository.find_by_user_id(user_id)
             if influencer and campaign.is_recruiting():
@@ -177,7 +191,11 @@ class CampaignService:
             business_name=business_name,
             business_address=business_address,
             can_apply=can_apply,
-            already_applied=already_applied
+            already_applied=already_applied,
+            advertiser_id=campaign.advertiser_id,
+            is_owner=is_owner,
+            user_role=user_role,
+            is_authenticated=is_authenticated
         )
 
     def list_recruiting_campaigns(

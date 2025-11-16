@@ -41,3 +41,7 @@ class CampaignDetailDTO:
     business_address: str
     can_apply: bool  # 인플루언서가 지원 가능한지 여부
     already_applied: bool  # 이미 지원했는지 여부
+    advertiser_id: int  # 체험단 광고주 ID
+    is_owner: bool  # 현재 사용자가 이 체험단의 소유자인지 여부
+    user_role: Optional[str]  # 현재 사용자 역할 (advertiser/influencer/None)
+    is_authenticated: bool  # 로그인 여부
