@@ -31,6 +31,13 @@ def register_advertiser():
     """
     form = AdvertiserRegistrationForm()
 
+    # 디버깅: 폼 에러 로깅
+    if request.method == 'POST' and not form.validate_on_submit():
+        print(f"❌ 폼 검증 실패: {form.errors}")
+        for field_name, errors in form.errors.items():
+            for error in errors:
+                flash(f'{field_name}: {error}', 'danger')
+
     if form.validate_on_submit():
         try:
             # Service 인스턴스 생성 (DI)
