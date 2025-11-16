@@ -40,9 +40,11 @@ def register_advertiser():
 
     if form.validate_on_submit():
         try:
+            from app.extensions import db
+
             # Service 인스턴스 생성 (DI)
-            advertiser_repo = AdvertiserRepository()
-            user_repo = UserRepository()
+            advertiser_repo = AdvertiserRepository(db.session)
+            user_repo = UserRepository(db.session)
             advertiser_service = AdvertiserService(advertiser_repo, user_repo)
 
             # 사업자등록번호에서 하이픈 제거
@@ -82,9 +84,11 @@ def dashboard():
 
     GET: 내 체험단 목록 표시 (모집중, 종료, 완료)
     """
+    from app.extensions import db
+
     # Service 인스턴스 생성
-    advertiser_repo = AdvertiserRepository()
-    campaign_repo = CampaignRepository()
+    advertiser_repo = AdvertiserRepository(db.session)
+    campaign_repo = CampaignRepository(db.session)
     campaign_service = CampaignService(campaign_repo)
 
     # 광고주 정보 조회
@@ -119,9 +123,11 @@ def create_campaign():
 
     if form.validate_on_submit():
         try:
+            from app.extensions import db
+
             # Service 인스턴스 생성
-            advertiser_repo = AdvertiserRepository()
-            campaign_repo = CampaignRepository()
+            advertiser_repo = AdvertiserRepository(db.session)
+            campaign_repo = CampaignRepository(db.session)
             campaign_service = CampaignService(campaign_repo)
 
             # 광고주 정보 조회
