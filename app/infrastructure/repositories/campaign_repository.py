@@ -160,6 +160,24 @@ class CampaignRepository(ICampaignRepository):
         )
         return count or 0
 
+    def find_by_advertiser_id(self, advertiser_id: int) -> List[Campaign]:
+        """
+        광고주 ID로 체험단 목록 조회
+
+        Args:
+            advertiser_id: 광고주 ID
+
+        Returns:
+            Campaign 엔티티 리스트
+        """
+        models = (
+            self.session.query(CampaignModel)
+            .filter(CampaignModel.advertiser_id == advertiser_id)
+            .order_by(desc(CampaignModel.created_at))
+            .all()
+        )
+        return [CampaignMapper.to_entity(model) for model in models]
+
     def save(self, campaign: Campaign) -> Campaign:
         """
         체험단 저장
