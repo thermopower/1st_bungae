@@ -32,12 +32,46 @@
                     {% if current_user.is_authenticated %}
                         <!-- 로그인된 사용자 -->
                         <li class="nav-item">
-                            <span class="navbar-text me-3">
-                                {{ current_user.email }}
-                            </span>
+                            <a class="nav-link" href="{{ url_for('main.home') }}">
+                                <i class="bi bi-house-door"></i> 홈
+                            </a>
                         </li>
+
+                        {% if current_user.role == 'advertiser' %}
+                        <!-- 광고주 메뉴 -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.logout') }}">로그아웃</a>
+                            <a class="nav-link" href="{{ url_for('advertiser.dashboard') }}">
+                                <i class="bi bi-speedometer2"></i> 광고주 대시보드
+                            </a>
+                        </li>
+                        {% elif current_user.role == 'influencer' %}
+                        <!-- 인플루언서 메뉴 -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('influencer.profile') }}">
+                                <i class="bi bi-person-circle"></i> 내 프로필
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-fill"></i> {{ current_user.email }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                {% if current_user.role == 'advertiser' %}
+                                <li><a class="dropdown-item" href="{{ url_for('advertiser.dashboard') }}">
+                                    <i class="bi bi-speedometer2"></i> 대시보드
+                                </a></li>
+                                {% elif current_user.role == 'influencer' %}
+                                <li><a class="dropdown-item" href="{{ url_for('influencer.profile') }}">
+                                    <i class="bi bi-person-circle"></i> 내 프로필
+                                </a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                    <i class="bi bi-box-arrow-right"></i> 로그아웃
+                                </a></li>
+                            </ul>
                         </li>
                     {% else %}
                         <!-- 비로그인 사용자 -->

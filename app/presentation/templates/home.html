@@ -4,6 +4,33 @@
 
 {% block content %}
 <div class="container mt-5">
+    <!-- 대시보드 진입 배너 (로그인 사용자만) -->
+    {% if current_user.is_authenticated and current_user.role %}
+    <div class="alert alert-primary alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                {% if current_user.role == 'advertiser' %}
+                <i class="bi bi-speedometer2"></i> <strong>광고주님 환영합니다!</strong> 체험단을 등록하고 관리하세요.
+                {% elif current_user.role == 'influencer' %}
+                <i class="bi bi-star-fill"></i> <strong>인플루언서님 환영합니다!</strong> 관심있는 체험단에 지원해보세요.
+                {% endif %}
+            </div>
+            <div>
+                {% if current_user.role == 'advertiser' %}
+                <a href="{{ url_for('advertiser.dashboard') }}" class="btn btn-sm btn-light">
+                    <i class="bi bi-speedometer2"></i> 대시보드 가기
+                </a>
+                {% elif current_user.role == 'influencer' %}
+                <a href="{{ url_for('influencer.profile') }}" class="btn btn-sm btn-light">
+                    <i class="bi bi-person-circle"></i> 내 프로필 보기
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
     <!-- 헤더 -->
     <div class="row mb-4">
         <div class="col-md-8">
