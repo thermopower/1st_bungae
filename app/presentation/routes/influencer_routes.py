@@ -56,14 +56,20 @@ def register_influencer():
                 follower_count=form.follower_count.data
             )
 
+            # 트랜잭션 커밋
+            db.session.commit()
+
             flash('인플루언서 정보가 성공적으로 등록되었습니다!', 'success')
             return redirect(url_for('main.home'))
 
         except InfluencerAlreadyRegisteredException as e:
+            db.session.rollback()
             flash(str(e), 'danger')
         except ValueError as e:
+            db.session.rollback()
             flash(str(e), 'danger')
         except Exception as e:
+            db.session.rollback()
             flash(f'인플루언서 정보 등록 중 오류가 발생했습니다: {str(e)}', 'danger')
 
     return render_template('influencer/register.html', form=form)
