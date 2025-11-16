@@ -72,8 +72,10 @@ class InfluencerService:
             raise ValueError(f"사용자를 찾을 수 없습니다: {user_id}")
 
         # 2. 인플루언서 등록 가능 여부 검증 (비즈니스 규칙)
-        if not InfluencerRules.can_register(user):
-            raise InfluencerAlreadyRegisteredException("이미 인플루언서 또는 광고주로 등록되어 있습니다.")
+        # 이미 인플루언서 정보를 등록했는지 확인
+        existing_influencer = self._influencer_repo.find_by_user_id(user_id)
+        if existing_influencer is not None:
+            raise InfluencerAlreadyRegisteredException("이미 인플루언서 정보가 등록되어 있습니다.")
 
         # 3. 팔로워 수 검증 (비즈니스 규칙)
         if not InfluencerRules.validate_follower_count(follower_count):

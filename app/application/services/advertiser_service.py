@@ -75,8 +75,10 @@ class AdvertiserService:
             raise ValueError(f"사용자를 찾을 수 없습니다: {user_id}")
 
         # 2. 광고주 등록 가능 여부 검증 (비즈니스 규칙)
-        if not AdvertiserRules.can_register(user):
-            raise AdvertiserAlreadyRegisteredException("이미 광고주 또는 인플루언서로 등록되어 있습니다.")
+        # 이미 광고주 정보를 등록했는지 확인
+        existing_advertiser = self._advertiser_repo.find_by_user_id(user_id)
+        if existing_advertiser is not None:
+            raise AdvertiserAlreadyRegisteredException("이미 광고주 정보가 등록되어 있습니다.")
 
         # 3. 사업자등록번호 중복 검증
         if self._advertiser_repo.exists_by_business_number(business_number):
