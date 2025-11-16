@@ -121,6 +121,12 @@ def create_campaign():
     """
     form = CampaignForm()
 
+    # 폼 검증 실패 시 에러 메시지 표시
+    if request.method == 'POST' and not form.validate_on_submit():
+        for field_name, errors in form.errors.items():
+            for error in errors:
+                flash(f'{field_name}: {error}', 'danger')
+
     if form.validate_on_submit():
         try:
             from app.extensions import db
@@ -153,10 +159,14 @@ def create_campaign():
                 image_url=image_url
             )
 
+            # 트랜잭션 커밋
+            db.session.commit()
+
             flash('체험단이 성공적으로 생성되었습니다!', 'success')
             return redirect(url_for('advertiser.dashboard'))
 
         except Exception as e:
+            db.session.rollback()
             flash(f'체험단 생성 중 오류가 발생했습니다: {str(e)}', 'danger')
 
     return render_template('advertiser/campaign_create.html', form=form)
