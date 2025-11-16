@@ -92,3 +92,21 @@ class ApplicationRepository(IApplicationRepository):
             {"status": status},
             synchronize_session=False
         )
+
+    def find_by_influencer_id(self, influencer_id: int) -> List[Application]:
+        """
+        인플루언서의 지원 내역 조회
+
+        Args:
+            influencer_id: 인플루언서 ID
+
+        Returns:
+            Application 엔티티 리스트 (지원일시 기준 최신순)
+        """
+        models = (
+            self.session.query(ApplicationModel)
+            .filter_by(influencer_id=influencer_id)
+            .order_by(ApplicationModel.applied_at.desc())
+            .all()
+        )
+        return [ApplicationMapper.to_entity(model) for model in models]

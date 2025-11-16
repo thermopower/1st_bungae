@@ -22,6 +22,7 @@ from app.domain.exceptions.application_exceptions import (
     CampaignNotRecruitingException,
     InfluencerNotRegisteredException,
 )
+from app.domain.exceptions.influencer_exceptions import InfluencerNotFoundException
 from app.domain.business_rules.application_rules import ApplicationRules
 from app.shared.constants.campaign_constants import (
     APPLICATION_STATUS_APPLIED,
@@ -174,3 +175,26 @@ class ApplicationService:
         # 체험단 상태 업데이트
         campaign.status = CampaignStatus.SELECTED
         self.campaign_repository.save(campaign)
+
+    def get_applications_by_influencer(self, influencer_id: int) -> List[Application]:
+        """
+        인플루언서의 지원 내역 조회
+
+        Args:
+            influencer_id: 인플루언서 ID
+
+        Returns:
+            Application 엔티티 리스트 (지원일시 기준 최신순)
+
+        Raises:
+            InfluencerNotFoundException: 인플루언서가 존재하지 않음
+        """
+        # 인플루언서 존재 여부 확인
+        influencer = self.influencer_repository.find_by_id(influencer_id)
+        if influencer is None:
+            raise InfluencerNotFoundException("인플루언서 정보를 찾을 수 없습니다")
+
+        # 지원 내역 조회
+        applications = self.application_repository.find_by_influencer_id(influencer_id)
+
+        return applications
